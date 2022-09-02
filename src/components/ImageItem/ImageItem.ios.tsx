@@ -28,6 +28,7 @@ import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
 
 const SWIPE_CLOSE_OFFSET = 75;
+const SWIPE_TO_CLOSE_OFFSET = 40;
 const SWIPE_CLOSE_VELOCITY = 1.55;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
@@ -78,6 +79,7 @@ const ImageItem = ({
   const onScrollEndDrag = useCallback(
     ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
       const velocityY = nativeEvent?.velocity?.y ?? 0;
+      const swipeDistance = nativeEvent?.contentOffset?.y ?? 0;
       const scaled = nativeEvent?.zoomScale > 1;
 
       onZoom(scaled);
@@ -86,7 +88,7 @@ const ImageItem = ({
       if (
         !scaled &&
         swipeToCloseEnabled &&
-        Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY
+        (Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY || Math.abs(swipeDistance) > SWIPE_TO_CLOSE_OFFSET)
       ) {
         onRequestClose();
       }
