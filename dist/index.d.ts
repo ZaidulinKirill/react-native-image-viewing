@@ -6,3 +6,4 @@
  *
  */
 export { default } from "./ImageViewing";
+export { default as ImageCarousel } from "./ImageCarousel";
