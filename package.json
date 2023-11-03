@@ -1,12 +1,12 @@
 {
-  "name": "react-native-image-viewing",
-  "version": "0.2.3",
+  "name": "@kirz/react-native-image-carousel",
+  "version": "0.1.0",
   "description": "React Native modal component for viewing images as a sliding gallery",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jobtoday/react-native-image-viewing.git"
+    "url": "git+https://github.com/zaikir/react-native-image-viewing.git"
   },
   "keywords": [
     "react",
@@ -18,7 +18,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "postversion": "yarn build"
+    "postversion": "yarn build",
+    "release": "npm publish --access public"
   },
   "peerDependencies": {
     "react": ">=16.11.0",
