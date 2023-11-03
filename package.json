@@ -1,6 +1,6 @@
 {
   "name": "@kirz/react-native-image-carousel",
-  "version": "0.1.2",
+  "version": "0.2.2",
   "description": "React Native modal component for viewing images as a sliding gallery",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsc",
     "postversion": "yarn build",
-    "release": "npm publish --access public"
+    "release": "npm run build && npm publish --access public"
   },
   "peerDependencies": {
     "react": ">=16.11.0",

@@ -11,6 +11,7 @@ import {
   Dimensions,
   StyleSheet,
   View,
+  ViewProps,
   VirtualizedList,
 } from "react-native";
 
@@ -18,17 +19,21 @@ import ImageItem from "./components/ImageItem/ImageItem";
 
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import { ImageSource } from "./@types";
+import useRequestClose from "./hooks/useRequestClose";
 
 type Props = {
   images: ImageSource[];
   keyExtractor?: (image: ImageSource, index: number) => string;
   imageIndex: number;
+  onRequestClose: () => void;
   onImageIndexChange?: (imageIndex: number) => void;
   onLongPress?: (image: ImageSource) => void;
   backgroundColor?: string;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
   delayLongPress?: number;
+  style?: ViewProps['style'];
+  containerWidth?: number
 };
 
 const DEFAULT_BG_COLOR = "#000";
@@ -42,12 +47,17 @@ function ImageCarousel({
   imageIndex,
   onLongPress = () => {},
   onImageIndexChange,
+  onRequestClose,
+  swipeToCloseEnabled,
   backgroundColor = DEFAULT_BG_COLOR,
   doubleTapToZoomEnabled,
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
+  containerWidth = SCREEN_WIDTH,
+  style
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
 
   useEffect(() => {
     if (onImageIndexChange) {
@@ -64,7 +74,7 @@ function ImageCarousel({
   );
 
   return (
-    <View style={[styles.container, { opacity: 1, backgroundColor }]}>
+    <View style={[styles.container, { opacity: 1, backgroundColor }, style]}>
       <VirtualizedList
         ref={imageList}
         data={images}
@@ -79,8 +89,8 @@ function ImageCarousel({
         getItem={(_, index) => images[index]}
         getItemCount={() => images.length}
         getItemLayout={(_, index) => ({
-          length: SCREEN_WIDTH,
-          offset: SCREEN_WIDTH * index,
+          length: containerWidth,
+          offset: containerWidth * index,
           index,
         })}
         renderItem={({ item: imageSrc }) => (
@@ -90,7 +100,7 @@ function ImageCarousel({
             onRequestClose={() => {}}
             onLongPress={onLongPress}
             delayLongPress={delayLongPress}
-            swipeToCloseEnabled={false}
+            swipeToCloseEnabled={swipeToCloseEnabled}
             doubleTapToZoomEnabled={doubleTapToZoomEnabled}
           />
         )}

@@ -9,13 +9,15 @@ import React, { useCallback, useRef, useEffect } from "react";
 import { Dimensions, StyleSheet, View, VirtualizedList, } from "react-native";
 import ImageItem from "./components/ImageItem/ImageItem";
 import useImageIndexChange from "./hooks/useImageIndexChange";
+import useRequestClose from "./hooks/useRequestClose";
 const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
-function ImageCarousel({ images, keyExtractor, imageIndex, onLongPress = () => { }, onImageIndexChange, backgroundColor = DEFAULT_BG_COLOR, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, }) {
+function ImageCarousel({ images, keyExtractor, imageIndex, onLongPress = () => { }, onImageIndexChange, onRequestClose, swipeToCloseEnabled, backgroundColor = DEFAULT_BG_COLOR, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, containerWidth = SCREEN_WIDTH, style }) {
     const imageList = useRef(null);
     const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+    const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
     useEffect(() => {
         if (onImageIndexChange) {
             onImageIndexChange(currentImageIndex);
@@ -26,12 +28,12 @@ function ImageCarousel({ images, keyExtractor, imageIndex, onLongPress = () => {
         // @ts-ignore
         (_b = (_a = imageList) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.setNativeProps({ scrollEnabled: !isScaled });
     }, [imageList]);
-    return (<View style={[styles.container, { opacity: 1, backgroundColor }]}>
+    return (<View style={[styles.container, { opacity: 1, backgroundColor }, style]}>
       <VirtualizedList ref={imageList} data={images} horizontal pagingEnabled windowSize={2} initialNumToRender={1} maxToRenderPerBatch={1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} initialScrollIndex={imageIndex} getItem={(_, index) => images[index]} getItemCount={() => images.length} getItemLayout={(_, index) => ({
-        length: SCREEN_WIDTH,
-        offset: SCREEN_WIDTH * index,
+        length: containerWidth,
+        offset: containerWidth * index,
         index,
-    })} renderItem={({ item: imageSrc }) => (<ImageItem onZoom={onZoom} imageSrc={imageSrc} onRequestClose={() => { }} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={false} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
+    })} renderItem={({ item: imageSrc }) => (<ImageItem onZoom={onZoom} imageSrc={imageSrc} onRequestClose={() => { }} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
     //@ts-ignore
     keyExtractor={(imageSrc, index) => keyExtractor
         ? keyExtractor(imageSrc, index)
